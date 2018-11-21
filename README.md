@@ -1,5 +1,5 @@
 # flood-it-solver
-Flood-It solver written in ASP for [telingo](https://github.com/potassco/telingo).
+Flood-It solver written for the ASP system [telingo](https://github.com/potassco/telingo).
 
 ## Usage
 
