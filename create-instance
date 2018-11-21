@@ -1,0 +1,43 @@
+#!/bin/bash
+
+gridsize=$1
+colors=$2
+
+# maxclick= Math.floor(25*((nrows+ncols)*ncolors)/((14+14)*6));
+
+re='^[1-9][0-9]*$'
+if ! [[ $gridsize =~ $re ]] ; then
+   echo "Error: No number for grid size provided (>= 2)" >&2; exit 1
+fi
+
+if ! [[ $colors =~ $re ]] ; then
+   echo "Error: No parameter for number of colors provided (>= 3)" >&2; exit 1
+fi
+
+# check if file exists. if true add prefix number to new file
+file=flood-it-board-${gridsize}x${gridsize}-$colors.lp
+if [[ -e ./instances/$file ]] ; 
+then
+    i=1
+    while [[ -e ./instances/$i-$file ]] ; do
+        let i++
+    done
+    file=./instances/$i-$file
+else
+    file=./instances/$file
+fi
+
+touch $file
+echo "colors($colors)." >> $file
+echo "" >> $file
+
+for i in $(seq 1 $gridsize);
+do
+    for j in $(seq 1 $gridsize);
+    do
+        r=$(( $RANDOM % $colors + 1 ));
+        echo "cell($i,$j,$r)." >> $file
+    done
+done
+
+echo "Created instance: $file"
