@@ -24,5 +24,5 @@ would create the file *./instances/flood-it-board-12x12-4.lp*.
 Install telingo, change to the directory of the downloaded flood-it-solver and then type (all via command line):
 
 ```shell
-telingo floodit.lp instances/floodit-board-12x12.lp 1 --stats
+telingo floodit.lp instances/flood-it-board-12x12.lp 1 --stats
 ```
