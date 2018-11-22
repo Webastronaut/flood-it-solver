@@ -16,6 +16,14 @@ flood(X0+DX,Y0+DY) :-
     cell(X0+DX,Y0+DY,C), 
     flood(X0,Y0).
 
+%*
+frontier(c(X0+DX,Y0+DY,C)) :- 
+    _dir(DX), _dir(DY),
+    |DX|+|DY|=1,
+    c(X0+DX,Y0+DY,C), 
+    flood(X0,Y0).
+*%
+
 #program dynamic.
 % check if cells already belong to flood set
 flood(X0+DX,Y0+DY) :- 
@@ -26,13 +34,21 @@ flood(X0+DX,Y0+DY) :-
     not 'flood(X0+DX,Y0+DY),
     flood(X0,Y0).
 
+%*
+frontier(c(X0+DX,Y0+DY,C)) :- 
+    _dir(DX), _dir(DY),
+    |DX|+|DY|=1,
+    c(X0+DX,Y0+DY,C), 
+    flood(X0,Y0).
+*%
+
 c(X,Y,C) :- 'c(X,Y,C), not flood(X,Y).
 
-%% choose a color in each step, when not chosen before, a frontier exists with a matching color and the flood set
-%% is not already of the same color
+%% choose a color in each step, when not chosen before and a cell with a matching color actually exists
+%% TODO: Optimize
 1 { choose(C) : _color(C), not 'choose(C), 'c(_,_,C) } 1.
 
-% choose color wisely
+% flood set must grow in each step
 floodincr :- flood(X,Y), not 'flood(X,Y).
 :- not floodincr.
 
@@ -43,5 +59,6 @@ flood(X,Y) :- 'flood(X,Y).
 :- c(X,Y,_), not flood(X,Y).
 
 #show choose/1.
-#show flood/2.
-#show c/3.
+%#show frontier/1.
+%#show flood/2.
+%#show c/3.
