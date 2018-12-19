@@ -26,3 +26,17 @@ Install telingo, change to the directory of the downloaded flood-it-solver and t
 ```shell
 telingo floodit.lp instances/flood-it-board-12x12-4.lp 1 --stats
 ```
+
+### Visualize solution
+
+To see a rudimentary visualization of the first found solution run the following command (works only with python 3.x):
+
+```shell
+python visualize.py [INSTANCE_FILE]
+```
+
+For example:
+
+```shell
+python visualize.py instances/flood-it-board-12x12-4.lp
+```
