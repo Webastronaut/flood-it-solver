@@ -86,3 +86,4 @@ min_steps_reached :- _min_steps(S0), step(S1), S0=S1.
 :- c(X,Y,_), not flood(X,Y).
 
 #show choose/1.
+#show c/3.
