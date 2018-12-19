@@ -19,11 +19,8 @@ dir(-1..1).
 num_cells(N) :- N = #count{ X : cell(X,1,_) }.
 num_colors(N) :- N = #count{ C : color(C) }.
 sqrt_min(@sqrt(N)) :- num_colors(C), N=2*C.
-%sqrt_max(@sqrt(N)) :- num_colors(C), N=C-1. 
 min_steps(S) :- num_cells(N), num_colors(C), sqrt_min(M), S = ((M*N)/2) - (C/2).
-%max_steps(S) :- num_cells(N), num_colors(C), sqrt_max(M), S = 2*N + N*M + C. 
 
-#program initial.
 % only consider cells which aren't already part of the flood
 c(X,Y,C) :- cell(X,Y,C), X+Y!=2, not flood(X,Y).
 % first cell is already part of the flood
@@ -82,9 +79,10 @@ floodincr :- flood(X,Y), not 'flood(X,Y).
 flood(X,Y) :- 'flood(X,Y).
 c(X,Y,C) :- 'c(X,Y,C), not flood(X,Y).
 
+min_steps_reached :- _min_steps(S0), step(S1), S0=S1.
+
 #program final.
-:- _min_steps(S), step(S'), S'<S.
-%:- _max_steps(S), step(S'), S'>S.
+:- not &tel{ <? min_steps_reached }.
 :- c(X,Y,_), not flood(X,Y).
 
 #show choose/1.
