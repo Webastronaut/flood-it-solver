@@ -24,41 +24,40 @@ min_steps(S) :- num_cells(N), num_colors(C), sqrt_min(M), S = ((M*N)/2) - (C/2).
 % only consider cells which aren't already part of the flood
 c(X,Y,C) :- cell(X,Y,C), X+Y!=2, not flood(X,Y).
 % first cell is already part of the flood
-flood(1,1) :- cell(1,1,C).
+flood(1,1) :- cell(1,1,_).
 choose(C) :- cell(1,1,C).
 step(0).
 
 % add adjacent cells to flood set if current color matches with choose(C)
 flood(X0+DX,Y0+DY) :- 
-    _dir(DX), _dir(DY),
-    |DX|+|DY|=1,
+    flood(X0,Y0),
+    dirs(DX,DY),
     choose(C),
-    cell(X0+DX,Y0+DY,C), 
-    flood(X0,Y0).
+    cell(X0+DX,Y0+DY,C). 
+
+% pairs of directions of interest for determination of frontier and flood
+dirs(DX,DY) :- dir(DX), dir(DY), |DX|+|DY|=1.
 
 #program always.
 % check if cells already belong to flood set
-flood(X0+DX,Y0+DY) :- 
-    _dir(DX), _dir(DY),
-    |DX|+|DY|=1,
+flood(X0+DX,Y0+DY) :-
+	not 'flood(X0+DX,Y0+DY), % reduces runtime for some reason
+    flood(X0,Y0),
+    _dirs(DX,DY),
     choose(C),
-    'c(X0+DX,Y0+DY,C), 
-    not 'flood(X0+DX,Y0+DY),
-    flood(X0,Y0).
+    'c(X0+DX,Y0+DY,C). 
 
 % determine direct frontier
 frontier(c(X0+DX,Y0+DY),C) :- 
-    _dir(DX), _dir(DY),
-    |DX|+|DY|=1,
+    _dirs(DX,DY),
     c(X0+DX,Y0+DY,C), 
     flood(X0,Y0).
 
 % frontier of frontier
 frontier(c(X0+DX,Y0+DY),C) :- 
-    _dir(DX), _dir(DY),
-    |DX|+|DY|=1,
-    c(X0+DX,Y0+DY,C), 
-    frontier(c(X0,Y0),C).
+	frontier(c(X0,Y0),C),
+    _dirs(DX,DY),
+    c(X0+DX,Y0+DY,C).
 
 #program dynamic.
 % count steps
@@ -70,10 +69,6 @@ frontier_subset_size(C,N) :- _color(C), N = #count{ X : 'frontier(X,C) }.
 max_subset_color(C) :- frontier_subset_size(C,N), N = #max{ M : frontier_subset_size(_,M) }.
 % choose a color
 1 { choose(C) : max_subset_color(C) } 1.
-
-% flood set must grow in each step
-floodincr :- flood(X,Y), not 'flood(X,Y).
-:- not floodincr.
 
 % inertia
 flood(X,Y) :- 'flood(X,Y).

@@ -11,6 +11,8 @@ max_size = 30
 grid = [[0 for x in range(max_size)] for y in range(max_size)]
 # final board
 c = []
+seq = []
+step = 0
 
 # set cell values
 def cell(x,y,cl,update=False):
@@ -46,7 +48,7 @@ def print_board():
 
 # update board based on telingo solution
 def process_output(s):
-    global output, c
+    global output, c, seq, step
     
     state = findall("State[0-9]+", s)[0]
     state = findall("([0-9]+)", state)[0]
@@ -57,14 +59,23 @@ def process_output(s):
     s = sub("choose\([0-9]+\)", "", s)
     s = sub("c", " c", s)
     s = sub(",[0-9]+\)", ")", s)
+
+    if step > 0:
+        seq.append(color)
     
-    print("State %s -> Choose %s:" % (state, color))
+    if step > 0:
+        print("State %s -> Choose %s:" % (state, color))
+    else:
+        print("State %s:" % state)
+
     for i in range(1, len(c)+1):
         for j in range(1, len(c)+1):
             c_str = "c(" + str(i) + "," + str(j) + ")"
 
             if c_str not in s:
                 cell(i,j,color,update=True)
+
+    step += 1
         
     print_board()
 
@@ -101,5 +112,8 @@ if stderr == None:
         match = sub('\n|:|\s', '', match[0])
         process_output(match)
         sleep(2)
+
+    print("Color sequence: ", end="")
+    print(seq)
 else:
     print(stderr)
